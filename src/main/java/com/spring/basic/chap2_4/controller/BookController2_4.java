@@ -99,21 +99,19 @@ public class BookController2_4 {
 
         Book removed = bookStore.remove(id);
 
-        for (Long key : bookStore.keySet()) {
-            Book book = bookStore.get(key);
-        }
-
         if (removed == null) {
             return id + "번 도서는 존재하지 않습니다. 삭제 실패!";
         }
         return "도서 삭제 완료: " + id;
     }
-
+    
+    // 5. 도서 수정
     @PutMapping("/{id}")
-    public String updateBook(String title,
-                             String author,
-                             int price,
-                             @PathVariable Long id
+    public String updateBook(
+            String title,
+            String author,
+            int price,
+            @PathVariable Long id
     ) {
         Book foundBook = bookStore.get(id);
 
@@ -131,6 +129,4 @@ public class BookController2_4 {
     public String count() {
         return "현재 저장된 도서의 개수: " + bookStore.size() + "권";
     }
-
-
 }
