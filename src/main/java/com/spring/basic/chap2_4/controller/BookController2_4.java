@@ -31,17 +31,23 @@ public class BookController2_4 {
         - 기본값은 id 오름차, title은 가나다순, price는 내림차
      */
     @GetMapping
-    public List<Book> list(@RequestParam(defaultValue = "id") String sort) {
+    public Map<String, Object> list(@RequestParam(defaultValue = "id") String sort) {
 //        List<Book> bookList = new ArrayList<>();
 //        for (Long key : bookStore.keySet()) {
 //            bookList.add(bookStore.get(key));
 //        }
 
-        return new ArrayList<>(bookStore.values())
+        List<Book> bookList = new ArrayList<>(bookStore.values())
             .stream()
             .sorted(getComparator(sort))
-            .collect(Collectors.toList())
-            ;
+            .collect(Collectors.toList());
+
+        int count = bookStore.size();
+
+        return Map.of(
+            "count", count,
+            "bookList", bookList
+        );
 
     }
 
@@ -84,6 +90,46 @@ public class BookController2_4 {
         bookStore.put(book.getId(), book);
 
         return "도서 추가 완료: " + book.getId();
+    }
+
+    // 4. 도서 삭제
+    // 삭제 요청 /api/v2-4/books/99 -> 삭제 실패 메시지 응답
+    @DeleteMapping("/{id}")
+    public String deleteBook(@PathVariable("id") Long id) {
+
+        Book removed = bookStore.remove(id);
+
+        for (Long key : bookStore.keySet()) {
+            Book book = bookStore.get(key);
+        }
+
+        if (removed == null) {
+            return id + "번 도서는 존재하지 않습니다. 삭제 실패!";
+        }
+        return "도서 삭제 완료: " + id;
+    }
+
+    @PutMapping("/{id}")
+    public String updateBook(String title,
+                             String author,
+                             int price,
+                             @PathVariable Long id
+    ) {
+        Book foundBook = bookStore.get(id);
+
+
+        if (foundBook == null) {
+            return id + "번 도서는 존재하지 않습니다.";
+        }
+
+        foundBook.updateBookInfo(title, author, price);
+        return "도서 수정 완료: id - " + id;
+    }
+
+    // 책이 몇권 저장됐는지 알려주기
+    @GetMapping("/count")
+    public String count() {
+        return "현재 저장된 도서의 개수: " + bookStore.size() + "권";
     }
 
 
