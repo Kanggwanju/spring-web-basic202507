@@ -1,6 +1,7 @@
 package com.spring.basic.score.controller;
 
 import com.spring.basic.score.dto.request.ScoreCreateDto;
+import com.spring.basic.score.dto.response.ScoreDetailResponse;
 import com.spring.basic.score.dto.response.ScoreListResponse;
 import com.spring.basic.score.entity.Score;
 import com.spring.basic.score.repository.ScoreMemoryRepository;
@@ -10,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,7 +28,7 @@ public class ScoreListController {
 
     // 학생 점수 조회
     @GetMapping
-    public ResponseEntity<?> scoreList(@RequestParam String sort) {
+    public ResponseEntity<?> getScoreList(@RequestParam String sort) {
         
         // Score -> ScoreListResponse 변환
         List<ScoreListResponse> scoreList = repository.findAll().values()
@@ -59,7 +57,7 @@ public class ScoreListController {
 
     // 학생 점수 생성
     @PostMapping
-    public ResponseEntity<?> create(
+    public ResponseEntity<?> createScore(
         @RequestBody @Valid ScoreCreateDto dto
         // 입력값 검증 오류 내용을 갖고있는 객체
         , BindingResult bindingResult
@@ -99,7 +97,45 @@ public class ScoreListController {
         return ResponseEntity.ok("Deleted Student Score ID: " + id);
     }
 
+    // 학생 점수 detail 반환
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDetailScore(@PathVariable("id") Long id) {
+        
+        // 저장소 전체 데이터 List로 가져옴
+        List<Score> allScores = new ArrayList<>(repository.findAll().values());
 
+        // 파라미터의 id와 동일한 Score 객체
+        Score targetScore = allScores.stream()
+            .filter(s -> s.getId().equals(id))
+            .findFirst()
+            .orElse(null);
+
+        if (targetScore == null) {
+            return ResponseEntity.status(400).body(id + "학번의 사람은 존재하지 않습니다.");
+        }
+
+        // 전체를 정렬하여 랭킹 계산
+        List<Score> sortedScores = allScores.stream()
+            .sorted(Comparator.comparing(Score::getTotal).reversed())
+            .collect(Collectors.toList());
+
+        // 순위, 총 인원 수
+        int rank = 1;
+        for (int i = 0; i < sortedScores.size(); i++) {
+            if (sortedScores.get(i).getId().equals(id)) {
+                rank = i + 1;
+                break;
+            }
+        }
+        int totalCount = sortedScores.size();
+
+        // DTO로 변환
+        ScoreDetailResponse response = ScoreDetailResponse.from(targetScore);
+        response.setRank(rank);
+        response.setTotalCount(totalCount);
+
+        return ResponseEntity.ok().body(response);
+    }
 
 
     private Comparator<ScoreListResponse> getComparator(String sort) {

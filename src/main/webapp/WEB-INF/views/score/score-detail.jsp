@@ -88,8 +88,9 @@
 
   <script>
 
-    // const pathname = window.location.pathname;
+    const pathname = window.location.pathname;
     // console.log(pathname);
+    const id = pathname.split('/').pop();
 
 
     async function fetchDetail() {

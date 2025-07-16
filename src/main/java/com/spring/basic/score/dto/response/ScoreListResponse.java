@@ -26,7 +26,7 @@ public class ScoreListResponse {
             .build();
     }
 
-    private static String getFormattedAverageScore(int total) {
+    public static String getFormattedAverageScore(int total) {
         double avg = (double) total/3;
         return String.format("%.2f", avg);
     }
