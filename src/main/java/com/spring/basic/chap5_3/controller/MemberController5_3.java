@@ -88,12 +88,21 @@ public class MemberController5_3 {
 
         log.info("param - {}", dto);
 
+        // 데이터 베이스 저장 : UID를 포함, 비밀번호를 인코딩
+        // dto -> entity로 변환하는 과정
+//        Member member = Member.builder()
+//                .account(dto.getUserAcc())
+//                .password(dto.getPw())
+//                .nickname(dto.getNick())
+//                .build();
 
+//        Member member = new Member(dto);
 
-        return null;
-//        memberStore.put(member.getuserAcc(), member);
-//
-//        return ResponseEntity.ok("created member: " + member);
+        Member member = MemberCreateDto.from(dto);
+
+        memberStore.put(dto.getUserAcc(), member);
+
+        return ResponseEntity.ok("created member: " + member);
     }
 
 }
