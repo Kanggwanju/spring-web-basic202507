@@ -3,8 +3,7 @@ package com.spring.basic.chap5_4.dto.response;
 import lombok.*;
 
 // 클라이언트에게 멤버 목록을 보내줄 때 사용할 응답 DTO
-@Getter
-@Setter
+@Getter @Setter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -13,5 +12,5 @@ import lombok.*;
 public class MemberListResponse {
     private String id;
     private String email; // account에 대응
-    private String nick;
+    private String nick; // 가운데 글자를 마스킹 (첫글자랑 마지막글자 빼고)
 }
