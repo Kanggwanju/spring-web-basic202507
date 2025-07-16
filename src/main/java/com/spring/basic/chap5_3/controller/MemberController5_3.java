@@ -2,6 +2,7 @@ package com.spring.basic.chap5_3.controller;
 
 import com.spring.basic.chap3_2.entity.Member;
 import com.spring.basic.chap5_3.dto.request.MemberCreateDto;
+import com.spring.basic.chap5_4.dto.response.MemberListResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +63,19 @@ public class MemberController5_3 {
 
         List<Member> members = new ArrayList<>(memberStore.values());
 
+        List<MemberListResponse> responses = new ArrayList<>();
+
+        for (Member m : members) {
+            MemberListResponse listResponse = new MemberListResponse();
+            listResponse.setId(m.getUid());
+            listResponse.setEmail(m.getAccount());
+            String originNick = m.getNickname();
+            String maskingNick = "" + originNick.charAt(0) + "*" + originNick.charAt(originNick.length() - 1);
+            listResponse.setNick(maskingNick);
+
+            responses.add(listResponse);
+        }
+
         log.debug("member.size = {}", members.size());
 
         if (members.size() <= 0) {
@@ -81,7 +95,7 @@ public class MemberController5_3 {
         log.trace("memberList 메서드 호출 종료됨");
         return ResponseEntity
             .ok()
-            .body(members);
+            .body(responses);
     }
 
     // 회원 생성
