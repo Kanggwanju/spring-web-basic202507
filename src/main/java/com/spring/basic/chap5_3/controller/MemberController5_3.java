@@ -9,10 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v5-3/members")
@@ -61,29 +61,20 @@ public class MemberController5_3 {
 
         log.info("/api/v5-3/members : GET - 요청 시작!");
 
-        List<Member> members = new ArrayList<>(memberStore.values());
+        List<MemberListResponse> responses = memberStore.values()
+                .stream()
+                .map(m -> MemberListResponse.from(m))
+                .collect(Collectors.toList());
 
-        List<MemberListResponse> responses = new ArrayList<>();
 
-        for (Member m : members) {
-            MemberListResponse listResponse = new MemberListResponse();
-            listResponse.setId(m.getUid());
-            listResponse.setEmail(m.getAccount());
-            String originNick = m.getNickname();
-            String maskingNick = "" + originNick.charAt(0) + "*" + originNick.charAt(originNick.length() - 1);
-            listResponse.setNick(maskingNick);
+        log.debug("member.size = {}", responses.size());
 
-            responses.add(listResponse);
-        }
-
-        log.debug("member.size = {}", members.size());
-
-        if (members.size() <= 0) {
+        if (responses.size() <= 0) {
             log.warn("회원 데이터가 없습니다.");
             return ResponseEntity.notFound().build();
         }
 
-        log.debug("members[0].nickname = {}", members.get(0).getNickname());
+        log.debug("members[0].nickname = {}", responses.get(0).getNick());
 
         try {
 
