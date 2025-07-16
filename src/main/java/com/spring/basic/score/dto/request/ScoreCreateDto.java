@@ -39,12 +39,12 @@ public class ScoreCreateDto {
             .kor(dto.getKorean())
             .eng(dto.getEnglish())
             .math(dto.getMath())
-            .total(dto.getEnglish() + dto.getKorean() + dto.getMath())
-            .average(getAverageScore(dto))
+//            .total(dto.getEnglish() + dto.getKorean() + dto.getMath())
+//            .average(getAverageScore(dto))
             .build();
     }
 
-    private static double getAverageScore(ScoreCreateDto dto) {
-        return (double) (dto.getEnglish() + dto.getKorean() + dto.getMath()) /3;
-    }
+//    private static double getAverageScore(ScoreCreateDto dto) {
+//        return (double) (dto.getEnglish() + dto.getKorean() + dto.getMath()) /3;
+//    }
 }

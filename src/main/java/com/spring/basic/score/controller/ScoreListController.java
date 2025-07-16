@@ -3,6 +3,7 @@ package com.spring.basic.score.controller;
 import com.spring.basic.score.dto.request.ScoreCreateDto;
 import com.spring.basic.score.dto.response.ScoreListResponse;
 import com.spring.basic.score.entity.Score;
+import com.spring.basic.score.repository.ScoreMemoryRepository;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,52 +21,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ScoreListController {
 
-    // key: account, value: member instance
-    private Map<Long, Score> scoreStore = new HashMap<>();
-    private Long nextId = 1L;
+    private final ScoreMemoryRepository repository;
 
-    public ScoreListController() {
-        Score s1 = Score.builder()
-            .id(nextId++)
-            .name("가나디")
-            .kor(55)
-            .eng(66)
-            .math(77)
-            .total(55 + 66 + 77)
-            .average((double) (55 + 66 + 77) /3)
-            .build();
-
-        Score s2 = Score.builder()
-            .id(nextId++)
-            .name("하치와레")
-            .kor(55)
-            .eng(66)
-            .math(33)
-            .total(55 + 66 + 33)
-            .average((double) (55 + 66 + 33) /3)
-            .build();
-
-        Score s3 = Score.builder()
-            .id(nextId++)
-            .name("치이카와")
-            .kor(77)
-            .eng(77)
-            .math(77)
-            .total(77 + 77 + 77)
-            .average((double) (77 + 77 + 77) /3)
-            .build();
-
-        scoreStore.put(s1.getId(), s1);
-        scoreStore.put(s2.getId(), s2);
-        scoreStore.put(s3.getId(), s3);
+    public ScoreListController(ScoreMemoryRepository repository) {
+        this.repository = repository;
     }
+
 
     // 학생 점수 조회
     @GetMapping
     public ResponseEntity<?> scoreList(@RequestParam String sort) {
         
         // Score -> ScoreListResponse 변환
-        List<ScoreListResponse> scoreList = scoreStore.values()
+        List<ScoreListResponse> scoreList = repository.findAll().values()
             .stream()
             .map(s -> ScoreListResponse.from(s))
             .sorted(Comparator.comparing(ScoreListResponse::getSum).reversed())
@@ -109,10 +77,13 @@ public class ScoreListController {
 
         log.info("param - {}", dto);
 
-        Score score = ScoreCreateDto.from(dto);
-        score.setId(nextId++);
+//        Score score = ScoreCreateDto.from(dto);
+//        score.setId(nextId++);
+//
+//        scoreStore.put(score.getId(), score);
 
-        scoreStore.put(score.getId(), score);
+        Score score = ScoreCreateDto.from(dto);
+        repository.save(score);
 
         return ResponseEntity.ok("created student score: " + score);
     }
@@ -121,11 +92,11 @@ public class ScoreListController {
     // 학생 점수 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteScore(@PathVariable("id") Long id) {
-        Score remove = scoreStore.remove(id);
+        Score remove = repository.deleteById(id);
         if (remove == null) {
             return ResponseEntity.badRequest().body(id + "학번은 존재하지 않습니다.");
         }
-        return ResponseEntity.ok("Student Score ID: " + id);
+        return ResponseEntity.ok("Deleted Student Score ID: " + id);
     }
 
 
