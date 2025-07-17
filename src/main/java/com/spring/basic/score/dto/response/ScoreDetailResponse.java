@@ -19,13 +19,16 @@ public class ScoreDetailResponse {
     private int rank;
     private int totalCount;
 
-    public static ScoreDetailResponse from(Score score) {
+    // 변환 메서드, 파라미터를 여러개 받을 경우에는 이름을 of로 만들어줌.
+    public static ScoreDetailResponse of(Score score, int totalCount, int ranking) {
         return ScoreDetailResponse.builder()
             .fullName(score.getName())
             .kor(score.getKor())
             .eng(score.getEng())
             .math(score.getMath())
             .total(score.getTotal())
+            .totalCount(totalCount)
+            .rank(ranking)
             .average(getFormattedAverageScore(score.getTotal()))
             .build();
     }

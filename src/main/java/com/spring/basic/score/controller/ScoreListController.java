@@ -140,9 +140,7 @@ public class ScoreListController {
         int totalCount = sortedScores.size();
 
         // DTO로 변환
-        ScoreDetailResponse response = ScoreDetailResponse.from(targetScore);
-        response.setRank(rank);
-        response.setTotalCount(totalCount);
+        ScoreDetailResponse response = ScoreDetailResponse.of(targetScore, totalCount, rank);
 
         return ResponseEntity.ok().body(response);
     }
