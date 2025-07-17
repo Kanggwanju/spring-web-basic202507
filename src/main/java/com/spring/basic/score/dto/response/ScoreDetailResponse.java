@@ -13,6 +13,7 @@ import static com.spring.basic.score.dto.response.ScoreListResponse.getFormatted
 @AllArgsConstructor
 @Builder
 public class ScoreDetailResponse {
+    private String fullName;
     private int kor, eng, math, total;
     private String average;
     private int rank;
@@ -20,6 +21,7 @@ public class ScoreDetailResponse {
 
     public static ScoreDetailResponse from(Score score) {
         return ScoreDetailResponse.builder()
+            .fullName(score.getName())
             .kor(score.getKor())
             .eng(score.getEng())
             .math(score.getMath())
