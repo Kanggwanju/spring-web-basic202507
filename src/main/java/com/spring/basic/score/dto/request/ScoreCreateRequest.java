@@ -1,10 +1,7 @@
 package com.spring.basic.score.dto.request;
 
 import com.spring.basic.score.entity.Score;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -14,26 +11,28 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScoreCreateDto {
-    @NotBlank(message = "이름은 필수입니다.")
+public class ScoreCreateRequest {
+    // 공백문자, null 둘다 허용하지 않음
+    @NotEmpty(message = "이름은 필수값입니다.")
+    @Pattern(regexp = "^[가-힣]+$", message = "이름은 한글로만 작성하세요!")
     private String studentName;
 
-    @NotNull(message = "점수 입력은 필수입니다.")
-    @Min(value = 0, message = "국어 점수는 0점 이상이여야합니다.")
+    @Min(value = 0, message = "국어 점수는 0점 이상이어야합니다.")
     @Max(value = 100, message = "국어 점수는 100점 이하여야합니다.")
-    private int korean;
+    @NotNull(message = "국어점수는 필수값입니다.")
+    private Integer korean;
 
-    @NotNull(message = "점수 입력은 필수입니다.")
-    @Min(value = 0, message = "영어 점수는 0점 이상이여야합니다.")
+    @Min(value = 0, message = "영어 점수는 0점 이상이어야합니다.")
     @Max(value = 100, message = "영어 점수는 100점 이하여야합니다.")
-    private int english;
+    @NotNull(message = "영어점수는 필수값입니다.")
+    private Integer english;
 
-    @NotNull(message = "점수 입력은 필수입니다.")
-    @Min(value = 0, message = "수학 점수는 0점 이상이여야합니다.")
+    @Min(value = 0, message = "수학 점수는 0점 이상이어야합니다.")
     @Max(value = 100, message = "수학 점수는 100점 이하여야합니다.")
-    private int math;
+    @NotNull(message = "수학점수는 필수값입니다.")
+    private Integer math;
 
-    public static Score from(ScoreCreateDto dto) {
+    public static Score from(ScoreCreateRequest dto) {
         return Score.builder()
             .name(dto.getStudentName())
             .kor(dto.getKorean())

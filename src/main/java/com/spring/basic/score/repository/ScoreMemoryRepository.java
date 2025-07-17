@@ -48,11 +48,13 @@ public class ScoreMemoryRepository {
         scoreStore.put(s3.getId(), s3);
     }
 
-    public void save(Score score) {
+    public Score save(Score score) {
         score.setId(nextId++);
         score.setTotal(score.getKor() + score.getEng() + score.getMath());
         score.setAverage((double) score.getTotal() /3);
         scoreStore.put(score.getId(), score);
+
+        return score;
     }
 
     public Score findById(Long id) {

@@ -1,6 +1,6 @@
 package com.spring.basic.score.controller;
 
-import com.spring.basic.score.dto.request.ScoreCreateDto;
+import com.spring.basic.score.dto.request.ScoreCreateRequest;
 import com.spring.basic.score.dto.response.ScoreDetailResponse;
 import com.spring.basic.score.dto.response.ScoreListResponse;
 import com.spring.basic.score.entity.Score;
@@ -32,7 +32,7 @@ public class ScoreListController {
         @RequestParam(defaultValue = "id") String sort
     ) {
 
-        log.info("/api/v1/scores GET ! - ");
+        log.info("/api/v1/scores GET !");
         log.debug("param: sort - {}", sort);
         
         // Score -> ScoreListResponse 변환
@@ -63,10 +63,14 @@ public class ScoreListController {
     // 학생 점수 생성
     @PostMapping
     public ResponseEntity<?> createScore(
-        @RequestBody @Valid ScoreCreateDto dto
+        @RequestBody @Valid ScoreCreateRequest dto
         // 입력값 검증 오류 내용을 갖고있는 객체
         , BindingResult bindingResult
     ) {
+
+        log.info("/api/v1/scores POST !");
+        log.info("param - {}", dto);
+
         if (bindingResult.hasErrors()) { // 검증 결과 에러가 있다면
             Map<String, String> errorMap = new HashMap<>();
             bindingResult.getFieldErrors().forEach(err -> {
@@ -78,21 +82,22 @@ public class ScoreListController {
         }
 
 
-        log.info("param - {}", dto);
+
 
 //        Score score = ScoreCreateDto.from(dto);
 //        score.setId(nextId++);
 //
 //        scoreStore.put(score.getId(), score);
+        
+        // 실제로 데이터베이스에 저장
+        Score score = ScoreCreateRequest.from(dto);
+        Score savedScore = repository.save(score);
 
-        Score score = ScoreCreateDto.from(dto);
-        repository.save(score);
-
-        return ResponseEntity.ok("created student score: " + score);
+        return ResponseEntity.ok().body("성적 정보 생성 완료 - " + savedScore);
     }
     
     
-    // 학생 점수 삭제
+    // 성적 정보 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteScore(@PathVariable("id") Long id) {
         Score remove = repository.deleteById(id);
