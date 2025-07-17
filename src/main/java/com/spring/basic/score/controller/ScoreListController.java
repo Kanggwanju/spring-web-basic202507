@@ -28,7 +28,12 @@ public class ScoreListController {
 
     // 학생 점수 조회
     @GetMapping
-    public ResponseEntity<?> getScoreList(@RequestParam String sort) {
+    public ResponseEntity<?> getScoreList(
+        @RequestParam(defaultValue = "id") String sort
+    ) {
+
+        log.info("/api/v1/scores GET ! - ");
+        log.debug("param: sort - {}", sort);
         
         // Score -> ScoreListResponse 변환
         List<ScoreListResponse> scoreList = repository.findAll().values()
