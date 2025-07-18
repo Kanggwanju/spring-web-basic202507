@@ -46,13 +46,14 @@ public class FeedRepository {
     // 데이터 저장 로직
     public void save(Feed feed) {
         feed.setFeedId(feedNextId++);
-        feed.setCreatedAt(LocalDateTime.now());
+//        feed.setCreatedAt(LocalDateTime.now());
 
         feedStore.put(feed.getFeedId(), feed);
     }
 
-    public void delete(Long id) {
-        feedStore.remove(id);
+    public boolean delete(Long id) {
+        Feed removed = feedStore.remove(id);
+        return removed != null;
     }
 
     public Feed getFeedByID(Long id) {
