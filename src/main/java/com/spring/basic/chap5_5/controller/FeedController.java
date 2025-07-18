@@ -71,5 +71,4 @@ public class FeedController {
         return ResponseEntity.ok().body(response);
     }
 
-
 }
