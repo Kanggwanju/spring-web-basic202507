@@ -1,14 +1,13 @@
 package com.spring.basic.chap6.controller;
 
+import com.spring.basic.chap5_3.dto.request.MemberCreateDto;
 import com.spring.basic.chap5_4.dto.response.MemberListResponse;
 import com.spring.basic.chap6.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v6/members")
@@ -37,13 +36,24 @@ public class MemberApiControllerV6 {
         // 3. 데이터베이스에서 가져온 회원정보를 그대로 응답하면 X - 정제가 필요
         //  ====> 서비스에게 위임
 
-        try {
-            MemberListResponse responseMember = memberService.findOneMember(account);
-            return ResponseEntity.ok(responseMember);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+//        try {
+//            MemberListResponse responseMember = memberService.findOneMember(account);
+//            return ResponseEntity.ok(responseMember);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
 
+        MemberListResponse responseMember = memberService.findOneMember(account);
+        return ResponseEntity.ok(responseMember);
+    }
+
+    // 회원 생성
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody @Valid MemberCreateDto dto) {
+        // 서비스에게 위임
+        MemberListResponse response = memberService.createMember(dto);
+
+        return ResponseEntity.ok(response);
     }
 
 }

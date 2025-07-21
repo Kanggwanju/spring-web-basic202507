@@ -38,4 +38,10 @@ public class MemberRepository {
         return memberStore.get(account);
     }
 
+    // 데이터를 저장하는 기능
+    public Member save(Member member) {
+        memberStore.put(member.getAccount(), member);
+        return findByAccount(member.getAccount());
+    }
+
 }
