@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 // 사용자가 올린 첨부파일 (이미지, 영상 등) 요청을 처리하는 컨트롤러
 @RestController
@@ -37,7 +38,9 @@ public class FileUploadController {
         // 루트 디렉토리 가져오기
         String rootDir = fileUploadConfig.getLocation();
         // 파일명 가져오기
-        String filename = originFile.getOriginalFilename();
+        String originFilename = originFile.getOriginalFilename();
+        String extension = originFilename.substring(originFilename.lastIndexOf("."));
+        String filename = UUID.randomUUID().toString() + extension;
         String fullName = rootDir + filename;
 
         File uploadedLocation = new File(fullName);
